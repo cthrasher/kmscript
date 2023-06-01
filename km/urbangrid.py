@@ -1,5 +1,6 @@
 from pydantic.dataclasses import dataclass
 from enum import Enum, auto
+from .building import Building
 
 class CardinalDirection(Enum):
     NORTH = 0

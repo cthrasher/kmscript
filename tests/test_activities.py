@@ -1,7 +1,9 @@
 import km
+import pytest
 
-def test_activities():
-    truth = {
+@pytest.fixture
+def truth():
+    return {
         ('Interphase', 'Interphase'): [
             "New Leadership",
         ],
@@ -60,6 +62,8 @@ def test_activities():
             "New Leadership",
         ],
     }
+
+def test_activities(truth):
     state = km.Interphase()
     states = set()
     while True:
@@ -69,3 +73,15 @@ def test_activities():
         for activity in km.Activities.available(pair):
             assert activity.NAME in truth[pair]
         state = state.next()
+
+def test_monkeypatch(truth):
+    class TakeCharge:
+        NAME = "Take Charge"
+        TAGS = ["leadership", "downtime"]
+        SKILLS = ["Any"]
+        STEPS = [("Activity", "Leadership Activities")]
+        TRAINED = True
+    km.Activities.ACTIVITIES.append(TakeCharge)
+    pair = ("Activity", "Leadership Activities")
+    for activity in km.Activities.available(pair):
+        assert activity.NAME in truth[pair] or activity.NAME == "Take Charge"
